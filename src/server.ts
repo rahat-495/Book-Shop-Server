@@ -7,22 +7,22 @@ import {Server} from "http";
 let server : Server ;
 const main = async () => {
 
-    try {
+  try {
 
-        await mongoose.connect(config.databaseUrl as string,)
-        .then(() => {
-            console.log("Connected to MongoDB");
-        }).catch((error) => {
-            console.error("MongoDB connection error:", error);
-        });
+    await mongoose.connect(config.databaseUrl as string,)
+    .then(() => {
+        console.log("Connected to MongoDB");
+    }).catch((error) => {
+        console.error("MongoDB connection error:", error);
+    });
 
-        server = app.listen(config.port , () => {
-            console.log(`server are running at port ${config.port} !`) ;
-        })
-        
-    } catch (error) {
-        console.log(error)   
-    }
+    server = app.listen(config.port , () => {
+        console.log(`server are running at port ${config.port} !`) ;
+    })
+      
+  } catch (error) {
+    console.log(error)   
+  }
 
 }
 

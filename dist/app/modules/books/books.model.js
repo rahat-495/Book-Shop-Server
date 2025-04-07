@@ -1,4 +1,5 @@
 "use strict";
+<<<<<<< HEAD
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksModel = void 0;
 const mongoose_1 = require("mongoose");
@@ -41,3 +42,5 @@ const bookSchema = new mongoose_1.Schema({
     timestamps: true,
 });
 exports.booksModel = (0, mongoose_1.model)("Book", bookSchema);
+=======
+>>>>>>> cbd6a4473eaa8484f0ab3da24c664fc277bd65e4
