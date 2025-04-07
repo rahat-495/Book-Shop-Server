@@ -1,11 +1,10 @@
 
 import { Router } from "express";
 import { bookControllers } from "./books.controllers";
-import { validateHeaderName } from "http";
-import validateRequest from "../middlewares/validateRequest";
 import { bookValidations } from "./books.validations";
 import { upload } from "../../utils/sendImageToCloudinary";
 import { parseTextDataToJsonData } from "./books.utils";
+import validateRequest from "../../../middlewares/validateRequest";
 
 const router = Router() ;
 
