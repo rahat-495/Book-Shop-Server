@@ -1,4 +1,5 @@
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import { TBook } from "./books.interfaces"
 import { booksModel } from "./books.model";
