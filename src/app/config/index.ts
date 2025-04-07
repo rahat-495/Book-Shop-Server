@@ -12,4 +12,7 @@ export default {
     jwtAccessSecret : process.env.JWT_ACCESS_SECRET,
     jwtRefreshSecret : process.env.JWT_Refresh_SECRET,
     jwtAccessSecretTime : process.env.JWT_ACCESS_SECRET_TIME,
+    cloudName : process.env.CLOUD_NAME,
+    apiKey : process.env.API_KEY,
+    apiSecret : process.env.API_SECRET,
 }
