@@ -84,7 +84,23 @@ const removeBookFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
     return result;
 });
+const updateBookIntoDb = (id, file, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isBookAxist = yield books_model_1.booksModel.findById(id);
+    if (!isBookAxist) {
+        throw new AppError_1.default(404, "Book not found");
+    }
+    if (file) {
+        const path = file.path;
+        const imageName = `${payload.title}${payload.category}`;
+        const { secure_url } = yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path);
+        payload.image = secure_url;
+    }
+    console.log(payload);
+    const result = yield books_model_1.booksModel.findByIdAndUpdate(id, payload, { new: true });
+    return result;
+});
 exports.bookServices = {
+    updateBookIntoDb,
     removeBookFromDb,
     createBookIntoDb,
     getAllBooksFromDb,

@@ -40,7 +40,14 @@ const removeBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book delete successfully !" });
     }
 }));
+const updateBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield books_services_1.bookServices.updateBookIntoDb(req.params.id, req.file, req.body);
+    if (result) {
+        (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book delete successfully !" });
+    }
+}));
 exports.bookControllers = {
+    updateBook,
     removeBook,
     createBook,
     getAllBooks,

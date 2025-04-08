@@ -5,7 +5,7 @@ const zod_1 = require("zod");
 const createBookValidationSchema = zod_1.z.object({
     body: zod_1.z.object({
         title: zod_1.z.string(),
-        author: zod_1.z.string(),
+        author: zod_1.z.string().email(),
         description: zod_1.z.string(),
         category: zod_1.z.enum(["Fiction", "Non-Fiction", "Fantasy", "History", "Science", "Biography"]),
         price: zod_1.z.number(),
@@ -14,6 +14,19 @@ const createBookValidationSchema = zod_1.z.object({
         availability: zod_1.z.boolean().optional(),
     })
 });
+const updateBookValidationSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        title: zod_1.z.string().optional(),
+        author: zod_1.z.string().optional(),
+        description: zod_1.z.string().optional(),
+        category: zod_1.z.enum(["Fiction", "Non-Fiction", "Fantasy", "History", "Science", "Biography"]).optional(),
+        price: zod_1.z.number().optional(),
+        stock: zod_1.z.number().min(1).optional(),
+        publishedDate: zod_1.z.string().optional(),
+        availability: zod_1.z.boolean().optional(),
+    })
+});
 exports.bookValidations = {
     createBookValidationSchema,
+    updateBookValidationSchema,
 };
