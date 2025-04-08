@@ -1,7 +1,10 @@
+
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import router from './app/routes';
+import globalErrorHandler from './middlewares/globalErrorHandler';
+import notFound from './middlewares/notFound';
 
 const app = express();
 
@@ -14,5 +17,8 @@ app.use('/api/v1', router);
 app.get('/', (req, res) => {
   res.json({ success: true, message: 'Book shop server is running !' });
 });
+
+app.use(globalErrorHandler) ;
+app.use(notFound) ;
 
 export default app;

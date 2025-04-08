@@ -51,7 +51,7 @@ const login = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-    const _a = user.toObject(), { password } = _a, remainingData = __rest(_a, ["password"]); // Ensure safe return data
+    const _a = user.toObject(), { password } = _a, remainingData = __rest(_a, ["password"]);
     return { accessToken, refreshToken, user: remainingData };
 });
 const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
