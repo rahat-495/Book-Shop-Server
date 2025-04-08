@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 export type TOrderBook = {
   email?: string;
   customer: Types.ObjectId;
-  product: Types.ObjectId; // references a book
+  product: Types.ObjectId;
   quantity: number;
   totalPrice: number;
   status?: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled';

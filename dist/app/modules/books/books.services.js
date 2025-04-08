@@ -1,6 +1,4 @@
 "use strict";
-<<<<<<< HEAD
-=======
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -12,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bookServices = void 0;
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
 const books_model_1 = require("./books.model");
 const createBookIntoDb = (file, payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,4 +28,3 @@ const createBookIntoDb = (file, payload) => __awaiter(void 0, void 0, void 0, fu
 exports.bookServices = {
     createBookIntoDb,
 };
->>>>>>> 6c0a4ab4f3ce8f78b235c5fe7d2f3d2b8deeca06

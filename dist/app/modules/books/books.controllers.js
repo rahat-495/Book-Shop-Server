@@ -1,6 +1,4 @@
 "use strict";
-<<<<<<< HEAD
-=======
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -18,7 +16,7 @@ exports.bookControllers = void 0;
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const books_services_1 = require("./books.services");
-const createBook = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const createBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield books_services_1.bookServices.createBookIntoDb(req.file, req.body);
     if (result) {
         (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book created successfully !" });
@@ -27,4 +25,3 @@ const createBook = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
 exports.bookControllers = {
     createBook,
 };
->>>>>>> 6c0a4ab4f3ce8f78b235c5fe7d2f3d2b8deeca06
