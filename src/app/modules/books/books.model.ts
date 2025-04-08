@@ -18,7 +18,7 @@ const bookSchema = new Schema<TBook>({
     category: {
         type: String,
         required: true,
-        enum: ["Fiction", "Non-Fiction", "Fantasy", "Romance", "Science", "Biography"],
+        enum: ["Fiction", "Non-Fiction", "Fantasy", "History", "Science", "Biography"],
     },
     price: {
         type: Number,
@@ -36,6 +36,10 @@ const bookSchema = new Schema<TBook>({
     publishedDate: {
         type: String,
         required: true,
+    },
+    availability: {
+        type: Boolean,
+        default : true,
     },
 },{
     timestamps : true,

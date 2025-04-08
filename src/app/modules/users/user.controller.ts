@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
@@ -33,6 +32,7 @@ const updateUserActiveStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await UserService.updateUserActiveStatusIntoDb(id);
   sendResponse(res, {
+    data: result ,
     statusCode: StatusCodes.OK,
     success: true,
     message: 'User Deactivated Successfully',

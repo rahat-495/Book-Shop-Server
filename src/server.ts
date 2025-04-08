@@ -8,22 +8,38 @@ import { Server } from 'http';
 
 let server: Server;
 const main = async () => {
+
   try {
-    await mongoose
-      .connect(config.databaseUrl as string)
-      .then(() => {
-        console.log('Connected to MongoDB');
-      })
-      .catch((error) => {
-        console.error('MongoDB connection error:', error);
-      });
 
-    server = app.listen(config.port, () => {
-      console.log(`server are running at port ${config.port} !`);
+    await mongoose.connect(config.databaseUrl as string,)
+    .then(() => {
+        console.log("Connected to MongoDB");
+    }).catch((error) => {
+        console.error("MongoDB connection error:", error);
     });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-main();
+    server = app.listen(config.port , () => {
+        console.log(`server are running at port ${config.port} !`) ;
+    })
+      
+  } catch (error) {
+    console.log(error)   
+  }
+
+}
+
+main() ;
+
+process.on("unhandledRejection" , () => {
+    if(server){
+        server.close(() => {
+            process.exit(1) ;
+        })
+    }
+    process.exit(1) ;   
+})
+
+process.on("uncaughtException" , () => {
+    process.exit(1) ;   
+})
+

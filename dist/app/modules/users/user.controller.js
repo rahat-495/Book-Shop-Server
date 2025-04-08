@@ -13,8 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
@@ -42,6 +41,9 @@ const updateUserActiveStatus = (0, catchAsync_1.default)((req, res) => __awaiter
     const { id } = req.params;
     const result = yield user_service_1.UserService.updateUserActiveStatusIntoDb(id);
     (0, sendResponse_1.default)(res, {
+
+        data: result,
+
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
         message: 'User Deactivated Successfully',
