@@ -13,6 +13,7 @@ const OrderBookSchema: Schema = new Schema<TOrderBook>(
       enum: ['Pending', 'Paid', 'Shipped', 'Completed', 'Cancelled'],
       default: 'Pending',
     },
+    // payment section
     // transaction: {
     //   id: { type: String, required: false },
     //   transactionStatus: { type: String, required: false },
