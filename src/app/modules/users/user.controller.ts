@@ -33,6 +33,7 @@ const updateUserActiveStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await UserService.updateUserActiveStatusIntoDb(id);
   sendResponse(res, {
+    data: result ,
     statusCode: StatusCodes.OK,
     success: true,
     message: 'User Deactivated Successfully',

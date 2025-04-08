@@ -42,6 +42,7 @@ const updateUserActiveStatus = (0, catchAsync_1.default)((req, res) => __awaiter
     const { id } = req.params;
     const result = yield user_service_1.UserService.updateUserActiveStatusIntoDb(id);
     (0, sendResponse_1.default)(res, {
+        data: result,
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
         message: 'User Deactivated Successfully',

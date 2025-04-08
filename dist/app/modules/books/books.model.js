@@ -1,5 +1,4 @@
 "use strict";
-<<<<<<< HEAD
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksModel = void 0;
 const mongoose_1 = require("mongoose");
@@ -19,7 +18,7 @@ const bookSchema = new mongoose_1.Schema({
     category: {
         type: String,
         required: true,
-        enum: ["Fiction", "Non-Fiction", "Fantasy", "Romance", "Science", "Biography"],
+        enum: ["Fiction", "Non-Fiction", "Fantasy", "History", "Science", "Biography"],
     },
     price: {
         type: Number,
@@ -38,9 +37,11 @@ const bookSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    availability: {
+        type: Boolean,
+        default: true,
+    },
 }, {
     timestamps: true,
 });
 exports.booksModel = (0, mongoose_1.model)("Book", bookSchema);
-=======
->>>>>>> cbd6a4473eaa8484f0ab3da24c664fc277bd65e4

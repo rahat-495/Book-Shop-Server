@@ -19,9 +19,7 @@ const http_status_codes_1 = require("http-status-codes");
 const user_model_1 = require("../app/modules/users/user.model");
 const catchAsync_1 = __importDefault(require("../app/utils/catchAsync"));
 const auth = (...requiredRole) => {
-    // const auth = (...requiredRole: string[]) => {
     return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        // const token = req.headers.authorization?.split(' ')[1];
         const token = req.headers.authorization;
         if (!token) {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'You are not Authorized!');
@@ -40,9 +38,6 @@ const auth = (...requiredRole) => {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'You are not authorized');
         }
         req.user = decoded;
-        // req.user = decoded as JwtPayload;
-        // req.user = user;
-        // req.user._id = _id;
         next();
     }));
 };

@@ -68,7 +68,16 @@ const getAllBooksFromDb = async (query : any) => {
     return { result , meta : { limit , page , total , totalPage }};
 }
 
+const getSingleBookFromDb = async (id : string) => {
+    const result = await booksModel.findById(id) ;
+    if(!result){
+        throw new AppError(404 , "Book not found") ;
+    }
+    return result ;
+}
+
 export const bookServices = {
     createBookIntoDb ,
     getAllBooksFromDb ,
+    getSingleBookFromDb ,
 }
