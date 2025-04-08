@@ -10,6 +10,7 @@ const createBookValidationSchema = z.object({
         price: z.number() ,
         stock: z.number().min(1) ,
         publishedDate: z.string() ,
+        availability: z.boolean().optional() ,
     })
 })
 

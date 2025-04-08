@@ -28,8 +28,41 @@ const getAllBooksFromDb = async (query : any) => {
     const limit = Number(query?.limit) || 10 ;
     const skip = (page - 1) * limit ;
 
-    const total = await booksModel.find().estimatedDocumentCount() ;
-    const result = await booksModel.find().skip(skip).limit(limit) ;
+    const filter: any = {};
+
+    if (query.searchTerm) {
+        filter.$or = [
+          { title: { $regex: query.searchTerm, $options: "i" } },
+          { author: { $regex: query.searchTerm, $options: "i" } },
+          { category: { $regex: query.searchTerm, $options: "i" } },
+        ];
+    }
+
+    if (query.author) {
+        filter.author = query.author;
+    }
+
+    if (query.category) {
+        filter.category = query.category;
+    }
+
+    if (query.availability) {
+        filter.availability = query.availability ;
+    }
+
+    if (query.minPrice && query.maxPrice) {
+        filter.price = {
+            $gte: Number(query.minPrice),
+            $lte: Number(query.maxPrice),
+        };
+    } else if (query.minPrice) {
+        filter.price = { $gte: Number(query.minPrice) };
+    } else if (query.maxPrice) {
+        filter.price = { $lte: Number(query.maxPrice) };
+    }
+
+    const total = await booksModel.find(filter).estimatedDocumentCount() ;
+    const result = await booksModel.find(filter).skip(skip).limit(limit) ;
     const totalPage = Math.ceil(result.length / limit) ;
 
     return { result , meta : { limit , page , total , totalPage }};
