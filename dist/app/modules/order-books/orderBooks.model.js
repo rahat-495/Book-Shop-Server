@@ -12,6 +12,7 @@ const OrderBookSchema = new mongoose_1.Schema({
         enum: ['Pending', 'Paid', 'Shipped', 'Completed', 'Cancelled'],
         default: 'Pending',
     },
+    // payment section
     // transaction: {
     //   id: { type: String, required: false },
     //   transactionStatus: { type: String, required: false },
