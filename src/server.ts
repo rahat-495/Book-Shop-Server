@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import mongoose from "mongoose";
-import app from "./app"
-import config from "./app/config";
-import {Server} from "http";
+import mongoose from 'mongoose';
+import app from './app';
+import config from './app/config';
+import { Server } from 'http';
 
-let server : Server ;
+let server: Server;
 const main = async () => {
 
   try {
@@ -40,3 +42,4 @@ process.on("unhandledRejection" , () => {
 process.on("uncaughtException" , () => {
     process.exit(1) ;   
 })
+

@@ -10,7 +10,6 @@ const books_validations_1 = require("./books.validations");
 const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
 const books_utils_1 = require("./books.utils");
 const validateRequest_1 = __importDefault(require("../../../middlewares/validateRequest"));
-const auth_1 = __importDefault(require("../../../middlewares/auth"));
 const router = (0, express_1.Router)();
 router.get('/', books_controllers_1.bookControllers.getAllBooks);
 router.delete('/:id', (0, auth_1.default)("admin"), books_controllers_1.bookControllers.removeBook);
