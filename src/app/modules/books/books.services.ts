@@ -76,7 +76,16 @@ const getSingleBookFromDb = async (id : string) => {
     return result ;
 }
 
+const removeBookFromDb = async (id : string) => {
+    const result = await booksModel.findByIdAndDelete(id) ;
+    if(!result){
+        throw new AppError(404 , "Book not found") ;
+    }
+    return result ;
+}
+
 export const bookServices = {
+    removeBookFromDb,
     createBookIntoDb ,
     getAllBooksFromDb ,
     getSingleBookFromDb ,

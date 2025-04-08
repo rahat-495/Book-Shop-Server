@@ -34,7 +34,14 @@ const getSingleBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book retribed successfully !" });
     }
 }));
+const removeBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield books_services_1.bookServices.removeBookFromDb(req.params.id);
+    if (result) {
+        (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book delete successfully !" });
+    }
+}));
 exports.bookControllers = {
+    removeBook,
     createBook,
     getAllBooks,
     getSingleBook,

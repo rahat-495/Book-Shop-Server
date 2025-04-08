@@ -9,6 +9,7 @@ import { parseTextDataToJsonData } from "./books.utils";
 const router = Router() ;
 
 router.get('/' , bookControllers.getAllBooks)
+router.delete('/:id' , bookControllers.removeBook)
 router.get('/get-single-book/:id' , bookControllers.getSingleBook)
 router.post('/create-book' , upload.single("file") , parseTextDataToJsonData , validateRequest(bookValidations.createBookValidationSchema) , bookControllers.createBook) ;
 

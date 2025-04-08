@@ -77,7 +77,15 @@ const getSingleBookFromDb = (id) => __awaiter(void 0, void 0, void 0, function* 
     }
     return result;
 });
+const removeBookFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield books_model_1.booksModel.findByIdAndDelete(id);
+    if (!result) {
+        throw new AppError_1.default(404, "Book not found");
+    }
+    return result;
+});
 exports.bookServices = {
+    removeBookFromDb,
     createBookIntoDb,
     getAllBooksFromDb,
     getSingleBookFromDb,
