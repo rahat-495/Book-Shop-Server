@@ -84,8 +84,27 @@ const removeBookFromDb = async (id : string) => {
     return result ;
 }
 
+const updateBookIntoDb = async (id : string , file : any , payload : Partial<TBook>) => {
+    const isBookAxist = await booksModel.findById(id) ;
+    if(!isBookAxist){
+        throw new AppError(404 , "Book not found") ;
+    }
+
+    if(file){
+        const path = file.path ;
+        const imageName = `${payload.title}${payload.category}` ;
+        const {secure_url} = await sendImageToCloudinary(imageName , path) as any ;
+        payload.image = secure_url ;
+    }
+    console.log(payload);
+
+    const result = await booksModel.findByIdAndUpdate(id , payload , {new : true}) ;
+    return result ;
+}
+
 export const bookServices = {
-    removeBookFromDb,
+    updateBookIntoDb ,
+    removeBookFromDb ,
     createBookIntoDb ,
     getAllBooksFromDb ,
     getSingleBookFromDb ,

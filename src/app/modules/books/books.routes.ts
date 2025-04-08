@@ -1,10 +1,10 @@
 
 import { Router } from "express";
 import { bookControllers } from "./books.controllers";
-import validateRequest from "../middlewares/validateRequest";
 import { bookValidations } from "./books.validations";
 import { upload } from "../../utils/sendImageToCloudinary";
 import { parseTextDataToJsonData } from "./books.utils";
+import validateRequest from "../../../middlewares/validateRequest";
 
 const router = Router() ;
 
@@ -12,5 +12,6 @@ router.get('/' , bookControllers.getAllBooks)
 router.delete('/:id' , bookControllers.removeBook)
 router.get('/get-single-book/:id' , bookControllers.getSingleBook)
 router.post('/create-book' , upload.single("file") , parseTextDataToJsonData , validateRequest(bookValidations.createBookValidationSchema) , bookControllers.createBook) ;
+router.put('/update-book/:id' , upload.single("file") , parseTextDataToJsonData , validateRequest(bookValidations.updateBookValidationSchema) , bookControllers.updateBook) ;
 
 export const booksRoutes = router ;
