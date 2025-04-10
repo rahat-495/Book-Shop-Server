@@ -20,13 +20,11 @@ const config_1 = __importDefault(require("./app/config"));
 let server;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default
-            .connect(config_1.default.databaseUrl)
+        yield mongoose_1.default.connect(config_1.default.databaseUrl)
             .then(() => {
-            console.log('Connected to MongoDB');
-        })
-            .catch((error) => {
-            console.error('MongoDB connection error:', error);
+            console.log("Connected to MongoDB");
+        }).catch((error) => {
+            console.error("MongoDB connection error:", error);
         });
         server = app_1.default.listen(config_1.default.port, () => {
             console.log(`server are running at port ${config_1.default.port} !`);
@@ -37,3 +35,14 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 main();
+process.on("unhandledRejection", () => {
+    if (server) {
+        server.close(() => {
+            process.exit(1);
+        });
+    }
+    process.exit(1);
+});
+process.on("uncaughtException", () => {
+    process.exit(1);
+});
