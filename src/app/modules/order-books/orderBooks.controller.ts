@@ -6,9 +6,9 @@ import AppError from '../../errors/AppError';
 import sendResponse from '../../utils/sendResponse';
 
 const createBookOrder = catchAsync(async (req: Request, res: Response) => {
-  const customer = req.user?._id;
+  const userId = req.user?._id;
 
-  if (!customer) {
+  if (!userId) {
     throw new AppError(StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
   }
 
@@ -23,12 +23,19 @@ const createBookOrder = catchAsync(async (req: Request, res: Response) => {
 
   const bookOrderData = {
     ...req.body,
-    customer,
+    user: userId, 
   };
+
+  
+  const client_ip =
+    req.headers['x-forwarded-for']?.toString().split(',')[0] ||
+    req.socket.remoteAddress ||
+    '127.0.0.1';
 
   const result = await orderBookService.createBookOrderService(
     bookOrderData,
-    customer
+    userId, 
+    client_ip
   );
 
   sendResponse(res, {
@@ -38,6 +45,7 @@ const createBookOrder = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 
 const getUserBookOrders = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?._id;
