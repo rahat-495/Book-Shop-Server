@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import AppError from '../../errors/AppError';
+import { JwtPayload } from 'jsonwebtoken';
 
 const createUserIntoDB = async (payload: TUser): Promise<TUser> => {
   payload.role = 'admin';
@@ -9,8 +10,8 @@ const createUserIntoDB = async (payload: TUser): Promise<TUser> => {
   return result;
 };
 
-const getUserFromDB = async () => {
-  const result = await User.find();
+const getUserFromDB = async (user : JwtPayload) => {
+  const result = await User.findOne({email : user?.email});
   return result;
 };
 

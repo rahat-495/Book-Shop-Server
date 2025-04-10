@@ -82,7 +82,7 @@ const deleteBookOrder = catchAsync(async (req: Request, res: Response) => {
 
   await orderBookService.deleteOrderFromDB(orderId, userId);
 
-  sendResponse(res, {
+  sendResponse(res, { data : {} ,
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Book order deleted successfully',

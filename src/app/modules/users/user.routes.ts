@@ -5,24 +5,24 @@ import { USER_ROLE } from './user.const';
 import validateRequest from '../../../middlewares/validateRequest';
 import auth from '../../../middlewares/auth';
 
-const UserRoutes = Router();
-UserRoutes.post(
+const router = Router();
+router.post(
   '/create-admin',
   validateRequest(UserValidation.updateUserValidationSchema),
   UserControllers.createUser
 );
 
-UserRoutes.patch(
+router.patch(
   '/:id/block',
   auth('admin'),
   validateRequest(UserValidation.updateUserValidationSchema),
   UserControllers.updateUserActiveStatus
 );
 
-UserRoutes.get(
+router.get(
   '/',
   auth(USER_ROLE.admin, USER_ROLE.user),
   UserControllers.getUser
 );
 
-export default UserRoutes;
+export const userRoutes = router ;
