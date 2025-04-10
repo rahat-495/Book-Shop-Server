@@ -20,9 +20,15 @@ router.patch(
 );
 
 router.get(
-  '/',
+  '/get-my-data',
   auth(USER_ROLE.admin, USER_ROLE.user),
   UserControllers.getUser
+);
+
+router.get(
+  '/',
+  auth(USER_ROLE.admin),
+  UserControllers.getAllUsers
 );
 
 export const userRoutes = router ;

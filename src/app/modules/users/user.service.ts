@@ -37,8 +37,14 @@ const updateUserActiveStatusIntoDb = async (id: string) => {
   return result;
 };
 
+const getAllUsersFromDb = async () => {
+  const result = await User.find({role : "user"}).select('-password');
+  return result;
+}
+
 export const UserService = {
-  createUserIntoDB,
   getUserFromDB,
+  createUserIntoDB,
+  getAllUsersFromDb ,
   updateUserActiveStatusIntoDb,
 };

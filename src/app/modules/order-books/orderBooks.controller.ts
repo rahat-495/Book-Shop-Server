@@ -86,7 +86,6 @@ const deleteBookOrder = catchAsync(async (req: Request, res: Response) => {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Book order deleted successfully',
-    data: '',
   });
 });
 

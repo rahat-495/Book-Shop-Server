@@ -29,6 +29,17 @@ const getUser = catchAsync(async (req, res) => {
   });
 });
 
+const getAllUsers = catchAsync(async (req, res) => {
+  const result = await UserService.getAllUsersFromDb();
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'All users retrived Successfully',
+    data: result,
+  });
+});
+
 const updateUserActiveStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await UserService.updateUserActiveStatusIntoDb(id);
@@ -41,7 +52,8 @@ const updateUserActiveStatus = catchAsync(async (req, res) => {
 });
 
 export const UserControllers = {
-  createUser,
   getUser,
+  createUser,
+  getAllUsers ,
   updateUserActiveStatus,
 };
