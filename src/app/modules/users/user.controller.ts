@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserService } from './user.service';
+import { JwtPayload } from 'jsonwebtoken';
 
 const createUser = catchAsync(async (req, res) => {
   const payload = req.body;
@@ -18,7 +19,7 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUser = catchAsync(async (req, res) => {
-  const result = await UserService.getUserFromDB();
+  const result = await UserService.getUserFromDB(req.user as JwtPayload);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
