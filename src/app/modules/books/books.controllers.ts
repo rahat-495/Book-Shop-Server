@@ -4,7 +4,7 @@ import sendResponse from "../../utils/sendResponse";
 import { bookServices } from "./books.services";
 
 const createBook = catchAsync(async (req , res) => {
-    const result = await bookServices.createBookIntoDb(req.file , req.body) ;
+    const result = await bookServices.createBookIntoDb(req.body) ;
     if(result){
         sendResponse<object>(res , {data : result , success : true , statusCode : 200 , message : "Book created successfully !"}) ;
     }
@@ -32,7 +32,7 @@ const removeBook = catchAsync(async (req , res) => {
 })
 
 const updateBook = catchAsync(async (req , res) => {
-    const result = await bookServices.updateBookIntoDb(req.params.id , req.file , req.body) ;
+    const result = await bookServices.updateBookIntoDb(req.params.id , req.body) ;
     if(result){
         sendResponse<object>(res , {data : result , success : true , statusCode : 200 , message : "Book delete successfully !"}) ;
     }
