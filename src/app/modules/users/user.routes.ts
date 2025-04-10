@@ -15,7 +15,7 @@ UserRoutes.post(
 UserRoutes.patch(
   '/:id/block',
   auth('admin'),
-  validateRequest(UserValidation.updateUserValidationSchema),
+  // validateRequest(UserValidation.updateUserValidationSchema),
   UserControllers.updateUserActiveStatus
 );
 
