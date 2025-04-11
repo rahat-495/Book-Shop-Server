@@ -10,7 +10,7 @@ OrderBookRouter.post(
   auth(userRole.user),
   orderBookController.createBookOrder
 );
-OrderBookRouter.post(
+OrderBookRouter.get(
   '/verify',
   auth(USER_ROLE.user),
   orderBookController.verifyBookOrder
