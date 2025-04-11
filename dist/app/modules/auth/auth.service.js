@@ -32,6 +32,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_model_1 = require("../users/user.model");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const config_1 = __importDefault(require("../../config"));
+const http_status_codes_2 = __importDefault(require("http-status-codes"));
+const sendEmail_1 = require("../../utils/sendEmail");
 const register = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.User.create(payload);
     return result;
@@ -85,8 +87,43 @@ const generateRefreshToken = (user) => {
         role: user.role,
     }, config_1.default.jwtRefreshSecret, { expiresIn: '365d' });
 };
+const requestForUpdateUserPassword = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isUserAxist = yield user_model_1.User.findOne({ email: payload.email });
+    if (!isUserAxist) {
+        throw new AppError_1.default(404, "User Not Found !");
+    }
+    if (!isUserAxist.isActivate) {
+        throw new AppError_1.default(http_status_codes_2.default.UNAUTHORIZED, "You are inactiva !");
+    }
+    const resetToken = yield jsonwebtoken_1.default.sign({
+        _id: isUserAxist._id,
+        email: isUserAxist.email,
+        role: isUserAxist.role,
+    }, config_1.default.jwtRefreshSecret, { expiresIn: '365d' });
+    const resetUiLink = `${config_1.default.resetPassUILink}?email=${isUserAxist === null || isUserAxist === void 0 ? void 0 : isUserAxist.email}&token=${resetToken}`;
+    (0, sendEmail_1.sendEmail)(isUserAxist === null || isUserAxist === void 0 ? void 0 : isUserAxist.email, resetUiLink);
+    return {};
+});
+const updateUserPassword = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isUserAxist = yield user_model_1.User.findOne({ email: payload.email }).select("+password");
+    if (!isUserAxist) {
+        throw new AppError_1.default(404, "User Not Found !");
+    }
+    if (!isUserAxist.isActivate) {
+        throw new AppError_1.default(http_status_codes_2.default.FORBIDDEN, "You are inactiva !");
+    }
+    const checkPassword = yield bcrypt_1.default.compare(payload.oldPassword, isUserAxist === null || isUserAxist === void 0 ? void 0 : isUserAxist.password);
+    if (!checkPassword) {
+        throw new AppError_1.default(http_status_codes_2.default.FORBIDDEN, "Password is not matched !");
+    }
+    const newPassword = yield bcrypt_1.default.hash(payload === null || payload === void 0 ? void 0 : payload.newPassword, 10);
+    const result = yield user_model_1.User.findByIdAndUpdate(isUserAxist === null || isUserAxist === void 0 ? void 0 : isUserAxist._id, { password: newPassword }, { new: true });
+    return result;
+});
 exports.AuthServices = {
-    register,
     login,
+    register,
     refreshToken,
+    updateUserPassword,
+    requestForUpdateUserPassword,
 };

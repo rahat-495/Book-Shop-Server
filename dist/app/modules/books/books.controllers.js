@@ -17,7 +17,7 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const books_services_1 = require("./books.services");
 const createBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield books_services_1.bookServices.createBookIntoDb(req.file, req.body);
+    const result = yield books_services_1.bookServices.createBookIntoDb(req.body);
     if (result) {
         (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book created successfully !" });
     }
@@ -41,7 +41,7 @@ const removeBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     }
 }));
 const updateBook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield books_services_1.bookServices.updateBookIntoDb(req.params.id, req.file, req.body);
+    const result = yield books_services_1.bookServices.updateBookIntoDb(req.params.id, req.body);
     if (result) {
         (0, sendResponse_1.default)(res, { data: result, success: true, statusCode: 200, message: "Book delete successfully !" });
     }

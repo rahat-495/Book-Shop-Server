@@ -21,10 +21,17 @@ OrderBookRouter.get(
   auth(userRole.user, userRole.admin),
   orderBookController.getUserBookOrders
 );
-OrderBookRouter.get(
+
+OrderBookRouter.post(
   '/my-carts',
   auth(userRole.user, userRole.admin),
   orderBookController.getCartItem
+);
+
+OrderBookRouter.post(
+  '/add-to-cart',
+  auth(userRole.user, userRole.admin),
+  orderBookController.addToCart
 );
 
 OrderBookRouter.patch(

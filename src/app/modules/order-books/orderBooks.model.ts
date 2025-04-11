@@ -1,5 +1,5 @@
-import { Schema, model } from 'mongoose';
-import { TOrderBook } from './orderBooks.interface';
+import mongoose, { Schema, model } from 'mongoose';
+import { TAddToCartIntoDb, TOrderBook } from './orderBooks.interface';
 
 const OrderBookSchema: Schema = new Schema<TOrderBook>(
   {
@@ -29,5 +29,22 @@ const OrderBookSchema: Schema = new Schema<TOrderBook>(
   }
 );
 
+const addToCartSchema = new Schema<TAddToCartIntoDb>({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Book", 
+    required: true
+  },
+  quantity : {
+    type : Number ,
+    required : true ,
+  },
+  email : {
+    type : String ,
+    required : true ,
+  },
+})
+
 const OrderBook = model<TOrderBook>('OrderBook', OrderBookSchema);
+export const cartModel = model<TAddToCartIntoDb>('cart', addToCartSchema);
 export default OrderBook;

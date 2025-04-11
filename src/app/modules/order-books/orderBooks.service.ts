@@ -3,8 +3,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { User } from '../users/user.model';
 import mongoose from 'mongoose';
-import OrderBook from './orderBooks.model';
-import { TOrderBook } from './orderBooks.interface';
+import OrderBook, { cartModel } from './orderBooks.model';
+import { TCartItem, TAddToCartIntoDb, TOrderBook } from './orderBooks.interface';
 import AppError from '../../errors/AppError';
 import { booksModel } from '../books/books.model';
 import { orderUtils } from './order.utils';
@@ -124,15 +124,25 @@ const getAllOrdersByUser = async (userId: string) => {
   return userOrders;
 };
 
-const getCartItem = async (userId: string) => {
-  const userOrders = await OrderBook.find({ customer: userId }).populate({
-    path: 'product',
-    select: 'title',
-  });
-  if (!userOrders || userOrders.length === 0) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'No orders found for this user');
+const getCartItem = async (payload : {email : string}) => {
+  const products = await cartModel.find({ email : payload?.email }).populate("product");
+  return products ;
+};
+
+const addToCartIntoDb = async (payload : TAddToCartIntoDb) => {
+  const isUserAxist = await User.findOne({ email : payload.email }) ;
+  if(!isUserAxist){
+    throw new AppError(404 , "User not found !") ;
   }
-  return userOrders;
+
+  const isProductAxist = await booksModel.findById(payload.product) ;
+  if(!isProductAxist){
+    throw new AppError(404 , "Book not found !") ;
+  }
+
+  const craeteCart = await cartModel.create(payload) ;
+  const result = await cartModel.findById(craeteCart._id).populate("product")
+  return result ;
 };
 
 const updateOrderQuantityService = async (
@@ -213,6 +223,7 @@ export const orderBookService = {
   createBookOrderService,
   verifyBookOrderPayment,
   getAllOrdersByUser,
+  addToCartIntoDb ,
   getCartItem,
   updateOrderQuantityService,
   deleteOrderFromDB,

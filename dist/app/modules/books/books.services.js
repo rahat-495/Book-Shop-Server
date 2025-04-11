@@ -15,19 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bookServices = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const AppError_1 = __importDefault(require("../../errors/AppError"));
-const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
 const user_model_1 = require("../users/user.model");
 const books_model_1 = require("./books.model");
-const createBookIntoDb = (file, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const createBookIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isUserExist = yield user_model_1.User.findOne({ email: payload.author });
     if (!isUserExist) {
         throw new AppError_1.default(404, "User not found");
-    }
-    if (file) {
-        const path = file.path;
-        const imageName = `${payload.title}${payload.category}`;
-        const { secure_url } = yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path);
-        payload.image = secure_url;
     }
     const result = yield books_model_1.booksModel.create(payload);
     return result;
@@ -84,18 +77,11 @@ const removeBookFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
     return result;
 });
-const updateBookIntoDb = (id, file, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateBookIntoDb = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isBookAxist = yield books_model_1.booksModel.findById(id);
     if (!isBookAxist) {
         throw new AppError_1.default(404, "Book not found");
     }
-    if (file) {
-        const path = file.path;
-        const imageName = `${payload.title}${payload.category}`;
-        const { secure_url } = yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path);
-        payload.image = secure_url;
-    }
-    console.log(payload);
     const result = yield books_model_1.booksModel.findByIdAndUpdate(id, payload, { new: true });
     return result;
 });
