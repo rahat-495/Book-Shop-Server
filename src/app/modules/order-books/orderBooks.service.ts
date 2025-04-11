@@ -84,6 +84,35 @@ const createBookOrderService = async (
   }
 };
 
+const verifyBookOrderPayment = async (order_id: string) => {
+  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
+
+  if (verifiedPayment.length) {
+    await OrderBook.findOneAndUpdate(
+      {
+        'transaction.id': order_id,
+      },
+      {
+        'transaction.bank_status': verifiedPayment[0].bank_status,
+        'transaction.sp_code': verifiedPayment[0].sp_code,
+        'transaction.sp_message': verifiedPayment[0].sp_message,
+        'transaction.transaction_status': verifiedPayment[0].transaction_status,
+        'transaction.method': verifiedPayment[0].method,
+        'transaction.date_time': verifiedPayment[0].date_time,
+        status:
+          verifiedPayment[0].bank_status === 'Success'
+            ? 'Paid'
+            : verifiedPayment[0].bank_status === 'Failed'
+            ? 'Pending'
+            : verifiedPayment[0].bank_status === 'Cancel'
+            ? 'Cancelled'
+            : '',
+      }
+    );
+  }
+
+  return verifiedPayment;
+};
 
 const getAllOrdersByUser = async (userId: string) => {
   const userOrders = await OrderBook.find({ customer: userId }).populate({
@@ -172,13 +201,12 @@ const adminDeleteOrder = async (id: string) => {
 
 export const orderBookService = {
   createBookOrderService,
+  verifyBookOrderPayment,
   getAllOrdersByUser,
   updateOrderQuantityService,
   deleteOrderFromDB,
   adminDeleteOrder,
 };
-
-
 
 // old order create code=====================
 // const createBookOrderService = async (data: TOrderBook, userId: string) => {

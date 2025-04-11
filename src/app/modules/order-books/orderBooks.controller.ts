@@ -23,10 +23,9 @@ const createBookOrder = catchAsync(async (req: Request, res: Response) => {
 
   const bookOrderData = {
     ...req.body,
-    user: userId, 
+    user: userId,
   };
 
-  
   const client_ip =
     req.headers['x-forwarded-for']?.toString().split(',')[0] ||
     req.socket.remoteAddress ||
@@ -34,7 +33,7 @@ const createBookOrder = catchAsync(async (req: Request, res: Response) => {
 
   const result = await orderBookService.createBookOrderService(
     bookOrderData,
-    userId, 
+    userId,
     client_ip
   );
 
@@ -46,6 +45,22 @@ const createBookOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const verifyBookOrder = catchAsync(async (req: Request, res: Response) => {
+  const { order_id } = req.query;
+
+  if (!order_id || typeof order_id !== 'string') {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Invalid order_id');
+  }
+
+  const result = await orderBookService.verifyBookOrderPayment(order_id);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Payment verification successful',
+    data: result,
+  });
+});
 
 const getUserBookOrders = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?._id;
@@ -112,6 +127,7 @@ const adminDeleteBookOrder = catchAsync(async (req: Request, res: Response) => {
 
 export const orderBookController = {
   createBookOrder,
+  verifyBookOrder,
   getUserBookOrders,
   updateBookOrderQuantity,
   deleteBookOrder,
