@@ -7,8 +7,13 @@ import OrderBook from './orderBooks.model';
 import { TOrderBook } from './orderBooks.interface';
 import AppError from '../../errors/AppError';
 import { booksModel } from '../books/books.model';
+import { orderUtils } from './order.utils';
 
-const createBookOrderService = async (data: TOrderBook, userId: string) => {
+const createBookOrderService = async (
+  data: TOrderBook,
+  userId: string,
+  client_ip: string
+) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -43,7 +48,32 @@ const createBookOrderService = async (data: TOrderBook, userId: string) => {
     await session.commitTransaction();
     session.endSession();
 
-    return result[0];
+    // Payment integration
+    const shurjopayPayload = {
+      amount: data.totalPrice,
+      order_id: result[0]._id,
+      currency: 'BDT',
+      customer_name: user.name,
+      customer_email: user.email,
+      customer_phone: 'N/A',
+      customer_address: 'N/A',
+      customer_city: 'N/A',
+      client_ip,
+    };
+
+    const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
+
+    if (payment?.transactionStatus) {
+      await result[0].updateOne({
+        transaction: {
+          id: payment.sp_order_id,
+          transactionStatus: payment.transactionStatus,
+        },
+      });
+    }
+
+    // Return both order and payment link
+    return { order: result[0], checkout_url: payment.checkout_url };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -52,6 +82,36 @@ const createBookOrderService = async (data: TOrderBook, userId: string) => {
       'Book order creation failed'
     );
   }
+};
+
+const verifyBookOrderPayment = async (order_id: string) => {
+  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
+
+  if (verifiedPayment.length) {
+    await OrderBook.findOneAndUpdate(
+      {
+        'transaction.id': order_id,
+      },
+      {
+        'transaction.bank_status': verifiedPayment[0].bank_status,
+        'transaction.sp_code': verifiedPayment[0].sp_code,
+        'transaction.sp_message': verifiedPayment[0].sp_message,
+        'transaction.transaction_status': verifiedPayment[0].transaction_status,
+        'transaction.method': verifiedPayment[0].method,
+        'transaction.date_time': verifiedPayment[0].date_time,
+        status:
+          verifiedPayment[0].bank_status === 'Success'
+            ? 'Paid'
+            : verifiedPayment[0].bank_status === 'Failed'
+            ? 'Pending'
+            : verifiedPayment[0].bank_status === 'Cancel'
+            ? 'Cancelled'
+            : '',
+      }
+    );
+  }
+
+  return verifiedPayment;
 };
 
 const getAllOrdersByUser = async (userId: string) => {
@@ -141,8 +201,56 @@ const adminDeleteOrder = async (id: string) => {
 
 export const orderBookService = {
   createBookOrderService,
+  verifyBookOrderPayment,
   getAllOrdersByUser,
   updateOrderQuantityService,
   deleteOrderFromDB,
   adminDeleteOrder,
 };
+
+// old order create code=====================
+// const createBookOrderService = async (data: TOrderBook, userId: string) => {
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+
+//   try {
+//     const user = await User.findById(userId).session(session);
+//     if (!user) {
+//       throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
+//     }
+
+//     const { product, quantity } = data;
+
+//     if (!data.customer) {
+//       data.customer = new mongoose.Types.ObjectId(user._id);
+//     }
+
+//     const book = await booksModel.findById(product).session(session);
+//     if (!book || book.stock < quantity) {
+//       throw new AppError(
+//         StatusCodes.BAD_REQUEST,
+//         'Insufficient stock or book not found.'
+//       );
+//     }
+
+//     data.totalPrice = book.price * quantity;
+//     book.stock -= quantity;
+//     await book.save({ session });
+
+//     const orderData = { ...data, customer: user._id };
+//     const result = await OrderBook.create([orderData], { session });
+//     await result[0].populate('customer', 'name email role');
+
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     return result[0];
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     throw new AppError(
+//       StatusCodes.INTERNAL_SERVER_ERROR,
+//       'Book order creation failed'
+//     );
+//   }
+// };

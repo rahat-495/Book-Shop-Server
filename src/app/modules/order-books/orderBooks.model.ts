@@ -14,15 +14,15 @@ const OrderBookSchema: Schema = new Schema<TOrderBook>(
       default: 'Pending',
     },
     // payment section
-    // transaction: {
-    //   id: { type: String, required: false },
-    //   transactionStatus: { type: String, required: false },
-    //   bank_status: { type: String, required: false },
-    //   sp_code: { type: String, required: false },
-    //   sp_message: { type: String, required: false },
-    //   method: { type: String, required: false },
-    //   date_time: { type: String, required: false },
-    // },
+    transaction: {
+      id: { type: String, required: false },
+      transactionStatus: { type: String, required: false },
+      bank_status: { type: String, required: false },
+      sp_code: { type: String, required: false },
+      sp_message: { type: String, required: false },
+      method: { type: String, required: false },
+      date_time: { type: String, required: false },
+    },
   },
   {
     timestamps: true,

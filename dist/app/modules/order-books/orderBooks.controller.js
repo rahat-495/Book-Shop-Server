@@ -19,21 +19,37 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const createBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const customer = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-    if (!customer) {
+    var _a, _b;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    if (!userId) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
     }
     const { product, quantity } = req.body;
     if (!product || !quantity) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Product and quantity are required.');
     }
-    const bookOrderData = Object.assign(Object.assign({}, req.body), { customer });
-    const result = yield orderBooks_service_1.orderBookService.createBookOrderService(bookOrderData, customer);
+    const bookOrderData = Object.assign(Object.assign({}, req.body), { user: userId });
+    const client_ip = ((_b = req.headers['x-forwarded-for']) === null || _b === void 0 ? void 0 : _b.toString().split(',')[0]) ||
+        req.socket.remoteAddress ||
+        '127.0.0.1';
+    const result = yield orderBooks_service_1.orderBookService.createBookOrderService(bookOrderData, userId, client_ip);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.CREATED,
         success: true,
         message: 'Book order created successfully',
+        data: result,
+    });
+}));
+const verifyBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { order_id } = req.query;
+    if (!order_id || typeof order_id !== 'string') {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Invalid order_id');
+    }
+    const result = yield orderBooks_service_1.orderBookService.verifyBookOrderPayment(order_id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'Payment verification successful',
         data: result,
     });
 }));
@@ -88,6 +104,7 @@ const adminDeleteBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(v
 }));
 exports.orderBookController = {
     createBookOrder,
+    verifyBookOrder,
     getUserBookOrders,
     updateBookOrderQuantity,
     deleteBookOrder,

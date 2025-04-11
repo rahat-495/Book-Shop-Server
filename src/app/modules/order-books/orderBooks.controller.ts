@@ -6,9 +6,9 @@ import AppError from '../../errors/AppError';
 import sendResponse from '../../utils/sendResponse';
 
 const createBookOrder = catchAsync(async (req: Request, res: Response) => {
-  const customer = req.user?._id;
+  const userId = req.user?._id;
 
-  if (!customer) {
+  if (!userId) {
     throw new AppError(StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
   }
 
@@ -23,18 +23,41 @@ const createBookOrder = catchAsync(async (req: Request, res: Response) => {
 
   const bookOrderData = {
     ...req.body,
-    customer,
+    user: userId,
   };
+
+  const client_ip =
+    req.headers['x-forwarded-for']?.toString().split(',')[0] ||
+    req.socket.remoteAddress ||
+    '127.0.0.1';
 
   const result = await orderBookService.createBookOrderService(
     bookOrderData,
-    customer
+    userId,
+    client_ip
   );
 
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     success: true,
     message: 'Book order created successfully',
+    data: result,
+  });
+});
+
+const verifyBookOrder = catchAsync(async (req: Request, res: Response) => {
+  const { order_id } = req.query;
+
+  if (!order_id || typeof order_id !== 'string') {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Invalid order_id');
+  }
+
+  const result = await orderBookService.verifyBookOrderPayment(order_id);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Payment verification successful',
     data: result,
   });
 });
@@ -103,6 +126,7 @@ const adminDeleteBookOrder = catchAsync(async (req: Request, res: Response) => {
 
 export const orderBookController = {
   createBookOrder,
+  verifyBookOrder,
   getUserBookOrders,
   updateBookOrderQuantity,
   deleteBookOrder,
