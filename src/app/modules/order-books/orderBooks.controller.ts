@@ -74,6 +74,18 @@ const getUserBookOrders = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getCartItem = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+  const result = await orderBookService.getCartItem(userId);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Carts retrieved successfully',
+    data: result,
+  });
+});
+
 const updateBookOrderQuantity = catchAsync(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
@@ -128,6 +140,7 @@ export const orderBookController = {
   createBookOrder,
   verifyBookOrder,
   getUserBookOrders,
+  getCartItem,
   updateBookOrderQuantity,
   deleteBookOrder,
   adminDeleteBookOrder,

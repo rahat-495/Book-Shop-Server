@@ -21,6 +21,11 @@ OrderBookRouter.get(
   auth(userRole.user, userRole.admin),
   orderBookController.getUserBookOrders
 );
+OrderBookRouter.get(
+  '/my-carts',
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  orderBookController.getCartItem
+);
 
 OrderBookRouter.patch(
   '/update-order-quantity/:orderId',

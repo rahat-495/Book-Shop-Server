@@ -125,6 +125,17 @@ const getAllOrdersByUser = async (userId: string) => {
   return userOrders;
 };
 
+const getCartItem = async (userId: string) => {
+  const userOrders = await OrderBook.find({ customer: userId }).populate({
+    path: 'product',
+    select: 'title',
+  });
+  if (!userOrders || userOrders.length === 0) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No orders found for this user');
+  }
+  return userOrders;
+};
+
 const updateOrderQuantityService = async (
   orderId: string,
   userId: string,
@@ -203,6 +214,7 @@ export const orderBookService = {
   createBookOrderService,
   verifyBookOrderPayment,
   getAllOrdersByUser,
+  getCartItem,
   updateOrderQuantityService,
   deleteOrderFromDB,
   adminDeleteOrder,
