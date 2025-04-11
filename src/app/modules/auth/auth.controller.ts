@@ -75,7 +75,7 @@ const updateUserPassword = catchAsync(async (req : Request , res : Response) => 
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
-      message: 'Email are sended !',
+      message: 'Password updated successfully !',
       data: result,
     });
   }
