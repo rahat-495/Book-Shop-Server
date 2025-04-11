@@ -2,7 +2,7 @@ import { Router } from 'express';
 import authRoutes from '../modules/auth/auth.routes';
 import { booksRoutes } from '../modules/books/books.routes';
 import OrderBookRouter from '../modules/order-books/orderBooks.routes';
-import UserRoutes from '../modules/users/user.routes';
+import { userRoutes } from '../modules/users/user.routes';
 
 const router = Router();
 
@@ -13,7 +13,7 @@ const moduleRoutes = [
   },
   {
     path: '/users',
-    route: UserRoutes,
+    route: userRoutes,
   },
   {
     path: '/books',
@@ -22,10 +22,6 @@ const moduleRoutes = [
   {
     path: '/orders',
     route: OrderBookRouter,
-  },
-  {
-    path: '/users',
-    route: userRoutes,
   },
 ];
 

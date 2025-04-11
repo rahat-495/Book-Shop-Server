@@ -12,7 +12,7 @@ OrderBookRouter.post(
 );
 OrderBookRouter.post(
   '/verify',
-  auth(USER_ROLE.user),
+  auth(userRole.user),
   orderBookController.verifyBookOrder
 );
 
