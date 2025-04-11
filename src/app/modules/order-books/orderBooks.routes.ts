@@ -10,7 +10,7 @@ OrderBookRouter.post(
   auth(userRole.user),
   orderBookController.createBookOrder
 );
-OrderBookRouter.post(
+OrderBookRouter.get(
   '/verify',
   auth(userRole.user),
   orderBookController.verifyBookOrder
@@ -20,6 +20,11 @@ OrderBookRouter.get(
   '/my-orders',
   auth(userRole.user, userRole.admin),
   orderBookController.getUserBookOrders
+);
+OrderBookRouter.get(
+  '/my-carts',
+  auth(userRole.user, userRole.admin),
+  orderBookController.getCartItem
 );
 
 OrderBookRouter.patch(
