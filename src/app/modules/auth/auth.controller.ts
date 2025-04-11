@@ -57,8 +57,34 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const requestForUpdateUserPassword = catchAsync(async (req : Request , res : Response) => {
+  const result = await AuthServices.requestForUpdateUserPassword(req.body) ;
+  if(result){
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: 'Email are sended, check your email !',
+      data: {},
+    });
+  }
+})
+
+const updateUserPassword = catchAsync(async (req : Request , res : Response) => {
+  const result = await AuthServices.updateUserPassword(req.body) ;
+  if(result){
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: 'Email are sended !',
+      data: result,
+    });
+  }
+})
+
 export const AuthControllers = {
-  register,
   login,
+  register,
   refreshToken,
+  updateUserPassword ,
+  requestForUpdateUserPassword ,
 };

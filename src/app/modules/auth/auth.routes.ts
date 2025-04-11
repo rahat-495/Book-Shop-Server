@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import { AuthControllers } from './auth.controller';
 import { AuthValidation } from './auth.validation';
@@ -11,6 +12,7 @@ authRoutes.post(
   validateRequest(UserValidation.userValidationSchema),
   AuthControllers.register,
 );
+
 authRoutes.post(
   '/login',
   validateRequest(AuthValidation.loginValidationSchema),
@@ -22,5 +24,8 @@ authRoutes.post(
   validateRequest(AuthValidation.refreshTokenValidationSchema),
   AuthControllers.refreshToken,
 );
+
+authRoutes.put('/request-update-password' , AuthControllers.requestForUpdateUserPassword)
+authRoutes.put('/update-password' , AuthControllers.updateUserPassword)
 
 export default authRoutes;

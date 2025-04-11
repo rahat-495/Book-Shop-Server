@@ -1,22 +1,14 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from "../../errors/AppError";
-import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import { User } from "../users/user.model";
 import { TBook } from "./books.interfaces"
 import { booksModel } from "./books.model";
 
-const createBookIntoDb = async (file : any , payload : TBook) => {
+const createBookIntoDb = async (payload : TBook) => {
     const isUserExist = await User.findOne({email : payload.author}) ;   
     if(!isUserExist){
         throw new AppError(404 , "User not found") ;
-    }
-
-    if(file){
-        const path = file.path ;
-        const imageName = `${payload.title}${payload.category}` ;
-        const {secure_url} = await sendImageToCloudinary(imageName , path) as any ;
-        payload.image = secure_url ;
     }
 
     const result = await booksModel.create(payload) ;
@@ -84,19 +76,11 @@ const removeBookFromDb = async (id : string) => {
     return result ;
 }
 
-const updateBookIntoDb = async (id : string , file : any , payload : Partial<TBook>) => {
+const updateBookIntoDb = async (id : string , payload : Partial<TBook>) => {
     const isBookAxist = await booksModel.findById(id) ;
     if(!isBookAxist){
         throw new AppError(404 , "Book not found") ;
     }
-
-    if(file){
-        const path = file.path ;
-        const imageName = `${payload.title}${payload.category}` ;
-        const {secure_url} = await sendImageToCloudinary(imageName , path) as any ;
-        payload.image = secure_url ;
-    }
-    console.log(payload);
 
     const result = await booksModel.findByIdAndUpdate(id , payload , {new : true}) ;
     return result ;

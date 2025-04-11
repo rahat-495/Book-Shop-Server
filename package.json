@@ -15,6 +15,7 @@
   "description": "",
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/nodemailer": "^6.4.17",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
     "cookie-parser": "^1.4.7",
@@ -26,6 +27,7 @@
     "mongoose": "^8.13.2",
     "multer": "^1.4.5-lts.2",
     "shurjopay": "^0.12.1",
+    "nodemailer": "^6.10.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
