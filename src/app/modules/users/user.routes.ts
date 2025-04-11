@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { UserValidation } from './user.validation';
 import { UserControllers } from './user.controller';
-import { USER_ROLE } from './user.const';
+import { userRole } from './user.const';
 import validateRequest from '../../../middlewares/validateRequest';
 import auth from '../../../middlewares/auth';
 
@@ -21,13 +21,13 @@ router.patch(
 
 router.get(
   '/get-my-data',
-  auth(USER_ROLE.admin, USER_ROLE.user),
+  auth(userRole.admin, userRole.user),
   UserControllers.getUser
 );
 
 router.get(
   '/',
-  auth(USER_ROLE.admin),
+  auth(userRole.admin),
   UserControllers.getAllUsers
 );
 
