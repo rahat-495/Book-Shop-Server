@@ -10,6 +10,11 @@ OrderBookRouter.post(
   auth(USER_ROLE.user),
   orderBookController.createBookOrder
 );
+OrderBookRouter.post(
+  '/verify',
+  auth(USER_ROLE.user),
+  orderBookController.verifyBookOrder
+);
 
 OrderBookRouter.get(
   '/my-orders',

@@ -7,11 +7,16 @@ const express_1 = require("express");
 const auth_routes_1 = __importDefault(require("../modules/auth/auth.routes"));
 const books_routes_1 = require("../modules/books/books.routes");
 const orderBooks_routes_1 = __importDefault(require("../modules/order-books/orderBooks.routes"));
+const user_routes_1 = __importDefault(require("../modules/users/user.routes"));
 const router = (0, express_1.Router)();
 const moduleRoutes = [
     {
         path: '/auth',
         route: auth_routes_1.default,
+    },
+    {
+        path: '/users',
+        route: user_routes_1.default,
     },
     {
         path: '/books',
