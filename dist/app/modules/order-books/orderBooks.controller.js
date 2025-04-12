@@ -120,13 +120,33 @@ const addToCart = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         data: result,
     });
 }));
+const getAllOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.getAllOrdersFromDb();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'All orders are retrived !',
+        data: result,
+    });
+}));
+const updateBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.updateBookOrderIntoDb(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'Status Updated Successfully !',
+        data: result,
+    });
+}));
 exports.orderBookController = {
-    createBookOrder,
     addToCart,
-    verifyBookOrder,
-    getUserBookOrders,
     getCartItem,
-    updateBookOrderQuantity,
+    getAllOrders,
+    createBookOrder,
+    verifyBookOrder,
     deleteBookOrder,
+    updateBookOrder,
+    getUserBookOrders,
     adminDeleteBookOrder,
+    updateBookOrderQuantity,
 };

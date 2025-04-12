@@ -141,6 +141,10 @@ const getAllOrdersByUser = (userId) => __awaiter(void 0, void 0, void 0, functio
     }
     return userOrders;
 });
+const getAllOrdersFromDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_model_1.default.find();
+    return result;
+});
 const getCartItem = (email) => __awaiter(void 0, void 0, void 0, function* () {
     const products = yield orderBooks_model_1.cartModel.find({ email: email.slice(6) }).populate("product");
     return products;
@@ -199,9 +203,6 @@ const deleteOrderFromDB = (id, userId) => __awaiter(void 0, void 0, void 0, func
     if (!order) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Order not found');
     }
-    if (order.customer.toString() !== userId) {
-        throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'Unauthorized to delete this order');
-    }
     return yield orderBooks_model_1.default.findByIdAndDelete(id);
 });
 const adminDeleteOrder = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -211,12 +212,22 @@ const adminDeleteOrder = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
     return yield orderBooks_model_1.default.findByIdAndDelete(id);
 });
+const updateBookOrderIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isOrderAxist = yield orderBooks_model_1.default.findById(payload === null || payload === void 0 ? void 0 : payload.id);
+    if (!isOrderAxist) {
+        throw new AppError_1.default(404, "Order not found !");
+    }
+    const result = yield orderBooks_model_1.default.findByIdAndUpdate(payload === null || payload === void 0 ? void 0 : payload.id, { status: payload === null || payload === void 0 ? void 0 : payload.status });
+    return result;
+});
 exports.orderBookService = {
     createBookOrderService,
+    updateBookOrderIntoDb,
     verifyBookOrderPayment,
     getAllOrdersByUser,
     addToCartIntoDb,
     getCartItem,
+    getAllOrdersFromDb,
     updateOrderQuantityService,
     deleteOrderFromDB,
     adminDeleteOrder,
