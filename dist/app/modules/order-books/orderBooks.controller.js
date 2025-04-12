@@ -25,7 +25,7 @@ const createBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         throw new AppError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
     }
     const { product, quantity } = req.body;
-    if (!product || !quantity) {
+    if (!product && !quantity) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Product and quantity are required.');
     }
     const bookOrderData = Object.assign(Object.assign({}, req.body), { user: userId });
@@ -65,7 +65,8 @@ const getUserBookOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void
     });
 }));
 const getCartItem = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield orderBooks_service_1.orderBookService.getCartItem(req.body);
+    var _a;
+    const result = yield orderBooks_service_1.orderBookService.getCartItem((_a = req.params) === null || _a === void 0 ? void 0 : _a.email);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
@@ -119,13 +120,33 @@ const addToCart = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         data: result,
     });
 }));
+const getAllOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.getAllOrdersFromDb();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'All orders are retrived !',
+        data: result,
+    });
+}));
+const updateBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.updateBookOrderIntoDb(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'Status Updated Successfully !',
+        data: result,
+    });
+}));
 exports.orderBookController = {
-    createBookOrder,
     addToCart,
-    verifyBookOrder,
-    getUserBookOrders,
     getCartItem,
-    updateBookOrderQuantity,
+    getAllOrders,
+    createBookOrder,
+    verifyBookOrder,
     deleteBookOrder,
+    updateBookOrder,
+    getUserBookOrders,
     adminDeleteBookOrder,
+    updateBookOrderQuantity,
 };

@@ -63,11 +63,11 @@ const createBookOrderService = (data, userId, client_ip) => __awaiter(void 0, vo
         if (!user) {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User not found');
         }
-        const { product, quantity } = data;
+        const { id, quantity } = data;
         if (!data.customer) {
             data.customer = new mongoose_1.default.Types.ObjectId(user._id);
         }
-        const book = yield books_model_1.booksModel.findById(product).session(session);
+        const book = yield books_model_1.booksModel.findById(id).session(session);
         if (!book || book.stock < quantity) {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Insufficient stock or book not found.');
         }
@@ -77,8 +77,6 @@ const createBookOrderService = (data, userId, client_ip) => __awaiter(void 0, vo
         const orderData = Object.assign(Object.assign({}, data), { customer: user._id });
         const result = yield orderBooks_model_1.default.create([orderData], { session });
         yield result[0].populate('customer', 'name email role');
-        yield session.commitTransaction();
-        session.endSession();
         // Payment integration
         const shurjopayPayload = {
             amount: data.totalPrice,
@@ -93,6 +91,7 @@ const createBookOrderService = (data, userId, client_ip) => __awaiter(void 0, vo
         };
         const payment = yield order_utils_1.orderUtils.makePaymentAsync(shurjopayPayload);
         if (payment === null || payment === void 0 ? void 0 : payment.transactionStatus) {
+            yield orderBooks_model_1.cartModel.findByIdAndDelete(data === null || data === void 0 ? void 0 : data.cardId, { session });
             yield result[0].updateOne({
                 transaction: {
                     id: payment.sp_order_id,
@@ -100,10 +99,13 @@ const createBookOrderService = (data, userId, client_ip) => __awaiter(void 0, vo
                 },
             });
         }
+        yield session.commitTransaction();
+        session.endSession();
         // Return both order and payment link
         return { order: result[0], checkout_url: payment.checkout_url };
     }
     catch (error) {
+        console.log(error);
         yield session.abortTransaction();
         session.endSession();
         throw new AppError_1.default(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, 'Book order creation failed');
@@ -133,16 +135,18 @@ const verifyBookOrderPayment = (order_id) => __awaiter(void 0, void 0, void 0, f
     return verifiedPayment;
 });
 const getAllOrdersByUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const userOrders = yield orderBooks_model_1.default.find({ customer: userId }).populate({
-        path: 'product customer',
-    });
+    const userOrders = yield orderBooks_model_1.default.find({ customer: userId }).populate("customer id");
     if (!userOrders || userOrders.length === 0) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'No orders found for this user');
     }
     return userOrders;
 });
-const getCartItem = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const products = yield orderBooks_model_1.cartModel.find({ email: payload === null || payload === void 0 ? void 0 : payload.email }).populate("product");
+const getAllOrdersFromDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_model_1.default.find();
+    return result;
+});
+const getCartItem = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const products = yield orderBooks_model_1.cartModel.find({ email: email.slice(6) }).populate("product");
     return products;
 });
 const addToCartIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -169,7 +173,7 @@ const updateOrderQuantityService = (orderId, userId, newQuantity) => __awaiter(v
         if (order.customer.toString() !== userId) {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'Unauthorized to update this order');
         }
-        const book = yield books_model_1.booksModel.findById(order.product).session(session);
+        const book = yield books_model_1.booksModel.findById(order.id).session(session);
         if (!book) {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Book not found');
         }
@@ -199,9 +203,6 @@ const deleteOrderFromDB = (id, userId) => __awaiter(void 0, void 0, void 0, func
     if (!order) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Order not found');
     }
-    if (order.customer.toString() !== userId) {
-        throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'Unauthorized to delete this order');
-    }
     return yield orderBooks_model_1.default.findByIdAndDelete(id);
 });
 const adminDeleteOrder = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -211,12 +212,22 @@ const adminDeleteOrder = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
     return yield orderBooks_model_1.default.findByIdAndDelete(id);
 });
+const updateBookOrderIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isOrderAxist = yield orderBooks_model_1.default.findById(payload === null || payload === void 0 ? void 0 : payload.id);
+    if (!isOrderAxist) {
+        throw new AppError_1.default(404, "Order not found !");
+    }
+    const result = yield orderBooks_model_1.default.findByIdAndUpdate(payload === null || payload === void 0 ? void 0 : payload.id, { status: payload === null || payload === void 0 ? void 0 : payload.status });
+    return result;
+});
 exports.orderBookService = {
     createBookOrderService,
+    updateBookOrderIntoDb,
     verifyBookOrderPayment,
     getAllOrdersByUser,
     addToCartIntoDb,
     getCartItem,
+    getAllOrdersFromDb,
     updateOrderQuantityService,
     deleteOrderFromDB,
     adminDeleteOrder,

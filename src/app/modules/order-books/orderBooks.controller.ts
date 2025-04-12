@@ -7,14 +7,14 @@ import sendResponse from '../../utils/sendResponse';
 
 const createBookOrder = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?._id;
-
+  
   if (!userId) {
     throw new AppError(StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
   }
-
+  
   const { product, quantity } = req.body;
-
-  if (!product || !quantity) {
+  
+  if (!product && !quantity) {
     throw new AppError(
       StatusCodes.BAD_REQUEST,
       'Product and quantity are required.'
@@ -75,7 +75,7 @@ const getUserBookOrders = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getCartItem = catchAsync(async (req: Request, res: Response) => {
-  const result = await orderBookService.getCartItem(req.body);
+  const result = await orderBookService.getCartItem(req.params?.email);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -146,13 +146,37 @@ const addToCart = catchAsync(async (req: Request, res: Response) => {
   });
 })
 
+const getAllOrders = catchAsync(async (req: Request, res: Response) => {
+  const result = await orderBookService.getAllOrdersFromDb();
+  
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'All orders are retrived !',
+    data: result,
+  });
+})
+
+const updateBookOrder = catchAsync(async (req: Request, res: Response) => {
+  const result = await orderBookService.updateBookOrderIntoDb(req.body);
+  
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Status Updated Successfully !',
+    data: result,
+  });
+})
+
 export const orderBookController = {
-  createBookOrder,
   addToCart ,
-  verifyBookOrder,
-  getUserBookOrders,
   getCartItem,
-  updateBookOrderQuantity,
+  getAllOrders ,
+  createBookOrder,
+  verifyBookOrder,
   deleteBookOrder,
+  updateBookOrder ,
+  getUserBookOrders,
   adminDeleteBookOrder,
+  updateBookOrderQuantity,
 };

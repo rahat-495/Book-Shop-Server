@@ -38,8 +38,9 @@ const bookSchema = new Schema<TBook>({
         required: true,
     },
     availability: {
-        type: Boolean,
-        default : true,
+        type: String,
+        enum : ["Available" , "Unavailable"] ,
+        default : "Available" ,
     },
 },{
     timestamps : true,
