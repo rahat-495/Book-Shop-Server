@@ -9,7 +9,7 @@ export type TBookCategory =
 
 export type TBook = {
   title: string;
-  availability: boolean;
+  availability: "Available" | "Unavailable";
   author: string;
   description: string;
   category: TBookCategory;
