@@ -3,8 +3,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { User } from '../users/user.model';
 import mongoose from 'mongoose';
-import OrderBook from './orderBooks.model';
-import { TOrderBook } from './orderBooks.interface';
+import OrderBook, { cartModel } from './orderBooks.model';
+import { TCartItem, TAddToCartIntoDb, TOrderBook } from './orderBooks.interface';
 import AppError from '../../errors/AppError';
 import { booksModel } from '../books/books.model';
 import { orderUtils } from './order.utils';
@@ -23,30 +23,27 @@ const createBookOrderService = async (
       throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
     }
 
-    const { product, quantity } = data;
+    const { id , quantity } = data;
 
     if (!data.customer) {
       data.customer = new mongoose.Types.ObjectId(user._id);
     }
 
-    const book = await booksModel.findById(product).session(session);
+    const book = await booksModel.findById(id).session(session);
     if (!book || book.stock < quantity) {
       throw new AppError(
         StatusCodes.BAD_REQUEST,
         'Insufficient stock or book not found.'
       );
     }
-
+    
     data.totalPrice = book.price * quantity;
     book.stock -= quantity;
     await book.save({ session });
-
-    const orderData = { ...data, customer: user._id };
+    
+    const orderData = {...data, customer: user._id };
     const result = await OrderBook.create([orderData], { session });
     await result[0].populate('customer', 'name email role');
-
-    await session.commitTransaction();
-    session.endSession();
 
     // Payment integration
     const shurjopayPayload = {
@@ -64,6 +61,7 @@ const createBookOrderService = async (
     const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
 
     if (payment?.transactionStatus) {
+      await cartModel.findByIdAndDelete(data?.cardId , {session}) ;
       await result[0].updateOne({
         transaction: {
           id: payment.sp_order_id,
@@ -72,15 +70,20 @@ const createBookOrderService = async (
       });
     }
 
+    await session.commitTransaction();
+    session.endSession();
     // Return both order and payment link
     return { order: result[0], checkout_url: payment.checkout_url };
   } catch (error) {
+
+    console.log(error);
     await session.abortTransaction();
     session.endSession();
     throw new AppError(
       StatusCodes.INTERNAL_SERVER_ERROR,
       'Book order creation failed'
     );
+
   }
 };
 
@@ -115,25 +118,38 @@ const verifyBookOrderPayment = async (order_id: string) => {
 };
 
 const getAllOrdersByUser = async (userId: string) => {
-  const userOrders = await OrderBook.find({ customer: userId }).populate({
-    path: 'product',
-    select: 'title',
-  });
+  const userOrders = await OrderBook.find({ customer: userId }).populate("customer id")
+
   if (!userOrders || userOrders.length === 0) {
     throw new AppError(StatusCodes.NOT_FOUND, 'No orders found for this user');
   }
   return userOrders;
 };
 
-const getCartItem = async (userId: string) => {
-  const userOrders = await OrderBook.find({ customer: userId }).populate({
-    path: 'product',
-    select: 'title',
-  });
-  if (!userOrders || userOrders.length === 0) {
-    throw new AppError(StatusCodes.NOT_FOUND, 'No orders found for this user');
+const getAllOrdersFromDb = async () => {
+  const result = await OrderBook.find() ;
+  return result ;
+}
+
+const getCartItem = async (email : string) => {
+  const products = await cartModel.find({ email : email.slice(6) }).populate("product");
+  return products ;
+};
+
+const addToCartIntoDb = async (payload : TAddToCartIntoDb) => {
+  const isUserAxist = await User.findOne({ email : payload.email }) ;
+  if(!isUserAxist){
+    throw new AppError(404 , "User not found !") ;
   }
-  return userOrders;
+
+  const isProductAxist = await booksModel.findById(payload.product) ;
+  if(!isProductAxist){
+    throw new AppError(404 , "Book not found !") ;
+  }
+
+  const craeteCart = await cartModel.create(payload) ;
+  const result = await cartModel.findById(craeteCart._id).populate("product")
+  return result ;
 };
 
 const updateOrderQuantityService = async (
@@ -157,7 +173,7 @@ const updateOrderQuantityService = async (
       );
     }
 
-    const book = await booksModel.findById(order.product).session(session);
+    const book = await booksModel.findById(order.id).session(session);
     if (!book) {
       throw new AppError(StatusCodes.NOT_FOUND, 'Book not found');
     }
@@ -193,12 +209,6 @@ const deleteOrderFromDB = async (id: string, userId: string) => {
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
-  if (order.customer.toString() !== userId) {
-    throw new AppError(
-      StatusCodes.FORBIDDEN,
-      'Unauthorized to delete this order'
-    );
-  }
   return await OrderBook.findByIdAndDelete(id);
 };
 
@@ -210,11 +220,23 @@ const adminDeleteOrder = async (id: string) => {
   return await OrderBook.findByIdAndDelete(id);
 };
 
+const updateBookOrderIntoDb = async (payload : {id : string , status : string}) => {
+  const isOrderAxist = await OrderBook.findById(payload?.id) ;
+  if(!isOrderAxist){
+    throw new AppError(404 , "Order not found !") ;
+  }
+  const result = await OrderBook.findByIdAndUpdate(payload?.id , {status : payload?.status}) ;
+  return result ;
+}
+
 export const orderBookService = {
   createBookOrderService,
+  updateBookOrderIntoDb ,
   verifyBookOrderPayment,
   getAllOrdersByUser,
+  addToCartIntoDb ,
   getCartItem,
+  getAllOrdersFromDb ,
   updateOrderQuantityService,
   deleteOrderFromDB,
   adminDeleteOrder,

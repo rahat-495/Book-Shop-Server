@@ -12,4 +12,6 @@ const authRoutes = (0, express_1.Router)();
 authRoutes.post('/register', (0, validateRequest_1.default)(user_validation_1.UserValidation.userValidationSchema), auth_controller_1.AuthControllers.register);
 authRoutes.post('/login', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.loginValidationSchema), auth_controller_1.AuthControllers.login);
 authRoutes.post('/refresh-token', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.refreshTokenValidationSchema), auth_controller_1.AuthControllers.refreshToken);
+authRoutes.put('/request-update-password', auth_controller_1.AuthControllers.requestForUpdateUserPassword);
+authRoutes.put('/update-password', auth_controller_1.AuthControllers.updateUserPassword);
 exports.default = authRoutes;

@@ -3,8 +3,9 @@ import { Types } from 'mongoose';
 
 export type TOrderBook = {
   email?: string;
+  cardId?: string;
   customer: Types.ObjectId;
-  product: Types.ObjectId;
+  id: Types.ObjectId;
   quantity: number;
   totalPrice: number;
   status?: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled';
@@ -17,4 +18,15 @@ export type TOrderBook = {
     method: string;
     date_time: string;
   };
+};
+
+export type TCartItem = {
+  product: string;
+  quantity: number;
+};
+
+export type TAddToCartIntoDb = {
+  product: Types.ObjectId;
+  quantity: number;
+  email : string ;
 };

@@ -25,7 +25,7 @@ const createBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         throw new AppError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
     }
     const { product, quantity } = req.body;
-    if (!product || !quantity) {
+    if (!product && !quantity) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Product and quantity are required.');
     }
     const bookOrderData = Object.assign(Object.assign({}, req.body), { user: userId });
@@ -64,6 +64,16 @@ const getUserBookOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void
         data: result,
     });
 }));
+const getCartItem = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const result = yield orderBooks_service_1.orderBookService.getCartItem((_a = req.params) === null || _a === void 0 ? void 0 : _a.email);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'Carts retrieved successfully',
+        data: result,
+    });
+}));
 const updateBookOrderQuantity = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
@@ -85,11 +95,10 @@ const deleteBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
     const { orderId } = req.params;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
     yield orderBooks_service_1.orderBookService.deleteOrderFromDB(orderId, userId);
-    (0, sendResponse_1.default)(res, {
+    (0, sendResponse_1.default)(res, { data: {},
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
         message: 'Book order deleted successfully',
-        data: '',
     });
 }));
 const adminDeleteBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -102,11 +111,42 @@ const adminDeleteBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(v
         data: result,
     });
 }));
+const addToCart = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.addToCartIntoDb(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'Add to cart done !',
+        data: result,
+    });
+}));
+const getAllOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.getAllOrdersFromDb();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'All orders are retrived !',
+        data: result,
+    });
+}));
+const updateBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield orderBooks_service_1.orderBookService.updateBookOrderIntoDb(req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'Status Updated Successfully !',
+        data: result,
+    });
+}));
 exports.orderBookController = {
+    addToCart,
+    getCartItem,
+    getAllOrders,
     createBookOrder,
     verifyBookOrder,
-    getUserBookOrders,
-    updateBookOrderQuantity,
     deleteBookOrder,
+    updateBookOrder,
+    getUserBookOrders,
     adminDeleteBookOrder,
+    updateBookOrderQuantity,
 };

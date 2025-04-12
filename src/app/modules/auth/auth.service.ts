@@ -122,12 +122,12 @@ const updateUserPassword = async (payload : TUpdatePassword) => {
   }
   
   if(!isUserAxist.isActivate){
-    throw new AppError(http.UNAUTHORIZED , "You are inactiva !") ;
+    throw new AppError(http.FORBIDDEN , "You are inactiva !") ;
   }
   
   const checkPassword = await bcrypt.compare(payload.oldPassword , isUserAxist?.password) ;
   if(!checkPassword){
-    throw new AppError(http.UNAUTHORIZED , "Password is not matched !") ;
+    throw new AppError(http.FORBIDDEN , "Password is not matched !") ;
   }
 
   const newPassword = await bcrypt.hash(payload?.newPassword , 10) ;

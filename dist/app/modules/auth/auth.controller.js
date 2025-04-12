@@ -61,8 +61,32 @@ const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
         data: result,
     });
 }));
+const requestForUpdateUserPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.AuthServices.requestForUpdateUserPassword(req.body);
+    if (result) {
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_codes_1.StatusCodes.OK,
+            success: true,
+            message: 'Email are sended, check your email !',
+            data: {},
+        });
+    }
+}));
+const updateUserPassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.AuthServices.updateUserPassword(req.body);
+    if (result) {
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_codes_1.StatusCodes.OK,
+            success: true,
+            message: 'Password updated successfully !',
+            data: result,
+        });
+    }
+}));
 exports.AuthControllers = {
-    register,
     login,
+    register,
     refreshToken,
+    updateUserPassword,
+    requestForUpdateUserPassword,
 };

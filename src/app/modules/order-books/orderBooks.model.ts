@@ -1,11 +1,11 @@
-import { Schema, model } from 'mongoose';
-import { TOrderBook } from './orderBooks.interface';
+import mongoose, { Schema, model } from 'mongoose';
+import { TAddToCartIntoDb, TOrderBook } from './orderBooks.interface';
 
 const OrderBookSchema: Schema = new Schema<TOrderBook>(
   {
     email: { type: String, required: false },
     customer: { type: Schema.ObjectId, ref: 'User', required: true },
-    product: { type: Schema.ObjectId, ref: 'Book', required: true },
+    id: { type: Schema.ObjectId, ref: 'Book', required: true },
     quantity: { type: Number, required: [true, 'Quantity is required.'] },
     totalPrice: { type: Number, required: [true, 'Total price is required.'] },
     status: {
@@ -29,5 +29,22 @@ const OrderBookSchema: Schema = new Schema<TOrderBook>(
   }
 );
 
+const addToCartSchema = new Schema<TAddToCartIntoDb>({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Book", 
+    required: true
+  },
+  quantity : {
+    type : Number ,
+    required : true ,
+  },
+  email : {
+    type : String ,
+    required : true ,
+  },
+})
+
 const OrderBook = model<TOrderBook>('OrderBook', OrderBookSchema);
+export const cartModel = model<TAddToCartIntoDb>('cart', addToCartSchema);
 export default OrderBook;
