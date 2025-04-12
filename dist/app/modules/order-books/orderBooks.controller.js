@@ -21,12 +21,11 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const createBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-    console.log(req.body);
     if (!userId) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
     }
     const { product, quantity } = req.body;
-    if (!product || !quantity) {
+    if (!product && !quantity) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Product and quantity are required.');
     }
     const bookOrderData = Object.assign(Object.assign({}, req.body), { user: userId });
@@ -66,7 +65,8 @@ const getUserBookOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void
     });
 }));
 const getCartItem = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield orderBooks_service_1.orderBookService.getCartItem(req.body);
+    var _a;
+    const result = yield orderBooks_service_1.orderBookService.getCartItem((_a = req.params) === null || _a === void 0 ? void 0 : _a.email);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,

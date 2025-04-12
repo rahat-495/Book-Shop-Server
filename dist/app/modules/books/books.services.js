@@ -43,8 +43,11 @@ const getAllBooksFromDb = (query) => __awaiter(void 0, void 0, void 0, function*
     if (query.category) {
         filter.category = query.category;
     }
-    if (query.availability) {
-        filter.availability = query.availability;
+    if (query.availability === "Available") {
+        filter.stock = { $gt: 0 };
+    }
+    else if (query.availability === "Unavailable") {
+        filter.stock = 0;
     }
     if (query.minPrice && query.maxPrice) {
         filter.price = {

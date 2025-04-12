@@ -11,7 +11,7 @@ const OrderBookRouter = (0, express_1.Router)();
 OrderBookRouter.post('/create-order', (0, auth_1.default)(user_const_1.userRole.user), orderBooks_controller_1.orderBookController.createBookOrder);
 OrderBookRouter.get('/verify', (0, auth_1.default)(user_const_1.userRole.user), orderBooks_controller_1.orderBookController.verifyBookOrder);
 OrderBookRouter.get('/my-orders', (0, auth_1.default)(user_const_1.userRole.user, user_const_1.userRole.admin), orderBooks_controller_1.orderBookController.getUserBookOrders);
-OrderBookRouter.post('/my-carts', (0, auth_1.default)(user_const_1.userRole.user, user_const_1.userRole.admin), orderBooks_controller_1.orderBookController.getCartItem);
+OrderBookRouter.get('/my-carts/:email', (0, auth_1.default)(user_const_1.userRole.user, user_const_1.userRole.admin), orderBooks_controller_1.orderBookController.getCartItem);
 OrderBookRouter.post('/add-to-cart', (0, auth_1.default)(user_const_1.userRole.user, user_const_1.userRole.admin), orderBooks_controller_1.orderBookController.addToCart);
 OrderBookRouter.patch('/update-order-quantity/:orderId', (0, auth_1.default)(user_const_1.userRole.user), orderBooks_controller_1.orderBookController.updateBookOrderQuantity);
 OrderBookRouter.delete('/:orderId', (0, auth_1.default)(user_const_1.userRole.user), orderBooks_controller_1.orderBookController.deleteBookOrder);
