@@ -18,3 +18,14 @@ export type TOrderBook = {
     date_time: string;
   };
 };
+
+export type TCartItem = {
+  product: string;
+  quantity: number;
+};
+
+export type TAddToCartIntoDb = {
+  product: Types.ObjectId;
+  quantity: number;
+  email : string ;
+};

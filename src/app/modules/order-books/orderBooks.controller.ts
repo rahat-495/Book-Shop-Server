@@ -74,6 +74,17 @@ const getUserBookOrders = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getCartItem = catchAsync(async (req: Request, res: Response) => {
+  const result = await orderBookService.getCartItem(req.body);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Carts retrieved successfully',
+    data: result,
+  });
+});
+
 const updateBookOrderQuantity = catchAsync(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
@@ -124,10 +135,23 @@ const adminDeleteBookOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const addToCart = catchAsync(async (req: Request, res: Response) => {
+  const result = await orderBookService.addToCartIntoDb(req.body);
+  
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Add to cart done !',
+    data: result,
+  });
+})
+
 export const orderBookController = {
   createBookOrder,
+  addToCart ,
   verifyBookOrder,
   getUserBookOrders,
+  getCartItem,
   updateBookOrderQuantity,
   deleteBookOrder,
   adminDeleteBookOrder,

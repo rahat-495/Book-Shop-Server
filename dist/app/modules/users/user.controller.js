@@ -28,11 +28,20 @@ const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     });
 }));
 const getUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_service_1.UserService.getUserFromDB();
+    const result = yield user_service_1.UserService.getUserFromDB(req.user);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_codes_1.StatusCodes.OK,
         success: true,
         message: 'Users Getting Successfully',
+        data: result,
+    });
+}));
+const getAllUsers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_service_1.UserService.getAllUsersFromDb();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_codes_1.StatusCodes.OK,
+        success: true,
+        message: 'All users retrived Successfully',
         data: result,
     });
 }));
@@ -47,7 +56,8 @@ const updateUserActiveStatus = (0, catchAsync_1.default)((req, res) => __awaiter
     });
 }));
 exports.UserControllers = {
-    createUser,
     getUser,
+    createUser,
+    getAllUsers,
     updateUserActiveStatus,
 };

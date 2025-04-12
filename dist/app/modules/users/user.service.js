@@ -21,8 +21,8 @@ const createUserIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function
     const result = yield user_model_1.User.create(payload);
     return result;
 });
-const getUserFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_model_1.User.find();
+const getUserFromDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.User.findOne({ email: user === null || user === void 0 ? void 0 : user.email });
     return result;
 });
 const updateUserActiveStatusIntoDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,8 +39,13 @@ const updateUserActiveStatusIntoDb = (id) => __awaiter(void 0, void 0, void 0, f
     });
     return result;
 });
+const getAllUsersFromDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.User.find({ role: "user" }).select('-password');
+    return result;
+});
 exports.UserService = {
-    createUserIntoDB,
     getUserFromDB,
+    createUserIntoDB,
+    getAllUsersFromDb,
     updateUserActiveStatusIntoDb,
 };
