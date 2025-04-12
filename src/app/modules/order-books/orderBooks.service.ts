@@ -23,30 +23,27 @@ const createBookOrderService = async (
       throw new AppError(StatusCodes.NOT_FOUND, 'User not found');
     }
 
-    const { product, quantity } = data;
+    const { id , quantity } = data;
 
     if (!data.customer) {
       data.customer = new mongoose.Types.ObjectId(user._id);
     }
 
-    const book = await booksModel.findById(product).session(session);
+    const book = await booksModel.findById(id).session(session);
     if (!book || book.stock < quantity) {
       throw new AppError(
         StatusCodes.BAD_REQUEST,
         'Insufficient stock or book not found.'
       );
     }
-
+    
     data.totalPrice = book.price * quantity;
     book.stock -= quantity;
     await book.save({ session });
-
-    const orderData = { ...data, customer: user._id };
+    
+    const orderData = {...data, customer: user._id };
     const result = await OrderBook.create([orderData], { session });
     await result[0].populate('customer', 'name email role');
-
-    await session.commitTransaction();
-    session.endSession();
 
     // Payment integration
     const shurjopayPayload = {
@@ -64,6 +61,7 @@ const createBookOrderService = async (
     const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
 
     if (payment?.transactionStatus) {
+      await cartModel.findByIdAndDelete(data?.cardId , {session}) ;
       await result[0].updateOne({
         transaction: {
           id: payment.sp_order_id,
@@ -72,15 +70,20 @@ const createBookOrderService = async (
       });
     }
 
+    await session.commitTransaction();
+    session.endSession();
     // Return both order and payment link
     return { order: result[0], checkout_url: payment.checkout_url };
   } catch (error) {
+
+    console.log(error);
     await session.abortTransaction();
     session.endSession();
     throw new AppError(
       StatusCodes.INTERNAL_SERVER_ERROR,
       'Book order creation failed'
     );
+
   }
 };
 
@@ -124,8 +127,8 @@ const getAllOrdersByUser = async (userId: string) => {
   return userOrders;
 };
 
-const getCartItem = async (payload : {email : string}) => {
-  const products = await cartModel.find({ email : payload?.email }).populate("product");
+const getCartItem = async (email : string) => {
+  const products = await cartModel.find({ email : email.slice(6) }).populate("product");
   return products ;
 };
 
@@ -166,7 +169,7 @@ const updateOrderQuantityService = async (
       );
     }
 
-    const book = await booksModel.findById(order.product).session(session);
+    const book = await booksModel.findById(order.id).session(session);
     if (!book) {
       throw new AppError(StatusCodes.NOT_FOUND, 'Book not found');
     }

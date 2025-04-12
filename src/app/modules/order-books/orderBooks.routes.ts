@@ -22,8 +22,8 @@ OrderBookRouter.get(
   orderBookController.getUserBookOrders
 );
 
-OrderBookRouter.post(
-  '/my-carts',
+OrderBookRouter.get(
+  '/my-carts/:email',
   auth(userRole.user, userRole.admin),
   orderBookController.getCartItem
 );

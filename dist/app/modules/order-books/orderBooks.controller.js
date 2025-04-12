@@ -21,6 +21,7 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const createBookOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    console.log(req.body);
     if (!userId) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.UNAUTHORIZED, 'User Not Authenticated');
     }

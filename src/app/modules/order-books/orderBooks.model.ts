@@ -5,7 +5,7 @@ const OrderBookSchema: Schema = new Schema<TOrderBook>(
   {
     email: { type: String, required: false },
     customer: { type: Schema.ObjectId, ref: 'User', required: true },
-    product: { type: Schema.ObjectId, ref: 'Book', required: true },
+    id: { type: Schema.ObjectId, ref: 'Book', required: true },
     quantity: { type: Number, required: [true, 'Quantity is required.'] },
     totalPrice: { type: Number, required: [true, 'Total price is required.'] },
     status: {
