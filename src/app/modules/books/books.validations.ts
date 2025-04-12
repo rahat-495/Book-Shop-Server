@@ -10,7 +10,7 @@ const createBookValidationSchema = z.object({
         price: z.number() ,
         stock: z.number().min(1) ,
         publishedDate: z.string() ,
-        availability: z.boolean().optional() ,
+        availability: z.enum(["Available" , "Unavailable"]).optional() ,
     })
 })
 
@@ -23,7 +23,7 @@ const updateBookValidationSchema = z.object({
         price: z.number().optional() ,
         stock: z.number().min(1).optional() ,
         publishedDate: z.string().optional() ,
-        availability: z.boolean().optional() ,
+        availability: z.enum(["Available" , "Unavailable"]).optional() ,
     })
 })
 

@@ -37,11 +37,6 @@ const bookSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    availability: {
-        type: String,
-        enum: ["Available", "Unavailable"],
-        default: "Available",
-    },
 }, {
     timestamps: true,
 });
