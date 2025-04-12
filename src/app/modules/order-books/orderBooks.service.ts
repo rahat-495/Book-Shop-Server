@@ -126,6 +126,11 @@ const getAllOrdersByUser = async (userId: string) => {
   return userOrders;
 };
 
+const getAllOrdersFromDb = async () => {
+  const result = await OrderBook.find() ;
+  return result ;
+}
+
 const getCartItem = async (email : string) => {
   const products = await cartModel.find({ email : email.slice(6) }).populate("product");
   return products ;
@@ -204,12 +209,6 @@ const deleteOrderFromDB = async (id: string, userId: string) => {
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
-  if (order.customer.toString() !== userId) {
-    throw new AppError(
-      StatusCodes.FORBIDDEN,
-      'Unauthorized to delete this order'
-    );
-  }
   return await OrderBook.findByIdAndDelete(id);
 };
 
@@ -221,12 +220,23 @@ const adminDeleteOrder = async (id: string) => {
   return await OrderBook.findByIdAndDelete(id);
 };
 
+const updateBookOrderIntoDb = async (payload : {id : string , status : string}) => {
+  const isOrderAxist = await OrderBook.findById(payload?.id) ;
+  if(!isOrderAxist){
+    throw new AppError(404 , "Order not found !") ;
+  }
+  const result = await OrderBook.findByIdAndUpdate(payload?.id , {status : payload?.status}) ;
+  return result ;
+}
+
 export const orderBookService = {
   createBookOrderService,
+  updateBookOrderIntoDb ,
   verifyBookOrderPayment,
   getAllOrdersByUser,
   addToCartIntoDb ,
   getCartItem,
+  getAllOrdersFromDb ,
   updateOrderQuantityService,
   deleteOrderFromDB,
   adminDeleteOrder,

@@ -10,10 +10,23 @@ OrderBookRouter.post(
   auth(userRole.user),
   orderBookController.createBookOrder
 );
+
+OrderBookRouter.put(
+  '/update-order',
+  auth(userRole.admin),
+  orderBookController.updateBookOrder
+);
+
 OrderBookRouter.get(
   '/verify',
   auth(userRole.user),
   orderBookController.verifyBookOrder
+);
+
+OrderBookRouter.get(
+  '/',
+  auth(userRole.admin),
+  orderBookController.getAllOrders
 );
 
 OrderBookRouter.get(
@@ -42,13 +55,13 @@ OrderBookRouter.patch(
 
 OrderBookRouter.delete(
   '/:orderId',
-  auth(userRole.user),
+  auth(userRole.user , userRole.admin),
   orderBookController.deleteBookOrder
 );
 
 OrderBookRouter.delete(
   '/:orderId',
-  auth(userRole.admin),
+  auth(userRole.admin , userRole.admin),
   orderBookController.adminDeleteBookOrder
 );
 
