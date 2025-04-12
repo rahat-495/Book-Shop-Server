@@ -118,9 +118,8 @@ const verifyBookOrderPayment = async (order_id: string) => {
 };
 
 const getAllOrdersByUser = async (userId: string) => {
-  const userOrders = await OrderBook.find({ customer: userId }).populate({
-    path: 'product customer',
-  });
+  const userOrders = await OrderBook.find({ customer: userId }).populate("customer id")
+
   if (!userOrders || userOrders.length === 0) {
     throw new AppError(StatusCodes.NOT_FOUND, 'No orders found for this user');
   }
